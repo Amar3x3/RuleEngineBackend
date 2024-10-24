@@ -67,6 +67,10 @@ public class RuleController {
     private SessionService sessionService;
 
     // Sign in a user
+    @GetMapping("/hello")
+    public String helloRuleEnigne(){
+        return "hello bud";
+    }
     @PostMapping("/signin")
     public String signIn(@RequestParam String email) {
         sessionService.signIn(email);
