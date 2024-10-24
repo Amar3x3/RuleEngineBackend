@@ -14,7 +14,7 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")  // Allow all endpoints
-                        .allowedOrigins("https://ornate-concha-bde7b9.netlify.app/")  // Allow requests from this origin
+                        .allowedOrigins("https://ruleenginefrontend.netlify.app/")  // Allow requests from this origin
                         .allowedMethods("GET", "POST", "PUT", "DELETE")  // Allow these HTTP methods
                         .allowedHeaders("*")  // Allow all headers
                         .allowCredentials(true);  // Allow credentials such as cookies
