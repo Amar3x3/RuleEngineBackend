@@ -123,23 +123,8 @@ public class RuleController {
             userRepository.save(user);
 
             response.put("ASt",node);
-            response.put("message", "Rule stored successfully.");
             response.put("rule", rule);
         }
-//        else if (payload.containsKey("userData")) {
-//            // Evaluate user data against the stored rule
-//            if (currentAST == null) {
-//                response.put("error", "No rule has been submitted yet.");
-//                return response;
-//            }
-//
-//            Map<String, Object> userData = (Map<String, Object>) payload.get("userData");
-//            boolean result = evaluateRule(currentAST, userData);
-//
-//            response.put("rule", currentRule);
-//            response.put("userData", userData);
-//            response.put("result", result);
-//        }
         else {
             response.put("error", "Invalid request. Please provide  'rule'");
         }
@@ -170,9 +155,10 @@ public class RuleController {
     public Map<String, Object> combineRules(@RequestBody Map<String, Object> payload) {
         List<String> rules = (List<String>) payload.get("rules");
         Map<String, Object> userData = (Map<String, Object>) payload.get("userData");
+        String operator = (String) payload.get("operator");
 
         // Combine the rules into one AST
-        Node combinedAST = combineRules(rules);
+        Node combinedAST = combineRules(rules, operator);
 
         // Evaluate the combined rule with the provided data
         boolean result = evaluateRule(combinedAST, userData);
@@ -181,6 +167,7 @@ public class RuleController {
         Map<String, Object> response = new HashMap<>();
         response.put("combinedRules", rules);
         response.put("result", result);
+        response.put("ast", combinedAST);
         return response;
     }
     @DeleteMapping("/{id}")
@@ -292,14 +279,14 @@ public class RuleController {
     private static String[] tokenizeRule(String rule) {
         return rule.split("(?<=\\()|(?=\\))|(?<=[^\\s]+(?=\\s+(AND|OR)))|(?<=(AND|OR))|(?=\\s+(AND|OR))");
     }
-    public static Node combineRules(List<String> rules) {
+    public static Node combineRules(List<String> rules, String operator) {
         Node combinedAST = null;
         for (String rule : rules) {
             Node ruleAST = generateAST(rule);
             if (combinedAST == null) {
                 combinedAST = ruleAST;
             } else {
-                combinedAST = new Node("operator", combinedAST, ruleAST, "OR");
+                combinedAST = new Node("operator", combinedAST, ruleAST, operator);
             }
         }
         return combinedAST;
